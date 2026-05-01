@@ -1,16 +1,26 @@
-name: Build caddy
+name: Sync caddy
 
 on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '15 9 * * *' # Everyday at 09:15 UTC
   workflow_dispatch:
+    inputs:
+      skip:
+        description: 'Skip'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - true
+          - false
 
-  release:
-    types: 
-      - 'prereleased' 
-      - 'published' 
-      - 'released'
+permissions:
+  contents: write
 
 jobs:
-  build:
+  sync:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,16 +42,58 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Get versions
+        id: versions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get latest upstream caddy version
+          UPSTREAM=$(gh api repos/caddyserver/caddy/releases/latest --jq '.tag_name' | sed 's/^v//')
+          echo "upstream=$UPSTREAM" >> "$GITHUB_OUTPUT"
+
+          # Get current caddy release info
+          CURRENT=$(gh api repos/${{ github.repository }}/releases/latest --jq '.tag_name' 2>/dev/null | sed 's/^Caddy_v//' || echo "")
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+
+          echo "Upstream caddy version: $UPSTREAM"
+          echo "Current caddy version: $CURRENT"
+
+    - name: Validate version override
+        if: inputs.version != ''
+        run: |
+          if [[ "${{ inputs.version }}" != v* ]]; then
+            echo "::error::Version override must start with 'v' (e.g. v1.0.0), got '${{ inputs.version }}'"
+            exit 1
+          fi
+
+    - name: Compare version
+        id: next
+        run: |
+          UPSTREAM="${{ steps.versions.outputs.upstream }}"
+          CURRENT="${{ steps.versions.outputs.current }}"
+
+          if [ "${{ inputs.skip }}" = "false" ] || [ "$UPSTREAM" != "$CURRENT" ]; then
+            echo "Need to run this time"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          echo "Don't need to run workflow this time"
+          echo "skip=true" >> "$GITHUB_OUTPUT"
+
     - name: Install go
+      if: steps.next.outputs.skip == 'false'
       uses: actions/setup-go@v5
       with:
         go-version: '1.26'
         check-latest: true
     
     - name: Install xcaddy
+      if: steps.next.outputs.skip == 'false'
       run: go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
     
     - name: Build caddy
+      if: steps.next.outputs.skip == 'false'
       run: |
         mkdir release-tmp
         export GOARCH=${{ matrix.config.GOARCH }} 
@@ -54,26 +106,36 @@ jobs:
           --output ./release-tmp/caddy
 
     - name: Calculate Hash
+      if: steps.next.outputs.skip == 'false'
       run: |
         cd ./release-tmp || exit 1
         sha256sum * > sha256
 
     - name: Generate tar
+      if: steps.next.outputs.skip == 'false'
       run: |
         mkdir release-ready
         cd ./release-tmp
         tar -zcvf ../release-ready/caddy-${{ matrix.config.name }}.tar.gz *
 
     - name: Upload a Build Artifact
+      if: steps.next.outputs.skip == 'false'
       uses: actions/upload-artifact@v4
       with:
         name: caddy-${{ github.sha }}-${{ matrix.config.name }}
         path: ./release-ready/*
         
     - name: Upload to GitHub Release
+      if: steps.next.outputs.skip == 'false'
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ./release-ready/caddy-${{ matrix.config.name }}.tar.gz
-        tag: ${{ github.ref }}
+        tag: Caddy_v${{ steps.versions.outputs.upstream }}
         overwrite: true
+        body: |
+          "This is Caddy built with the following plugins:"
+          - [caddy-dns/cloudflare](https://github.com/caddy-dns/cloudflare)
+          - [klzgrad/forwardproxy](https://github.com/klzgrad/forwardproxy)
+          - [imgk/caddy-trojan](https://github.com/imgk/caddy-trojan)
+          - [mholt/caddy-l4](https://github.com/mholt/caddy-l4)
