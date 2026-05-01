@@ -72,7 +72,6 @@ jobs:
         
     - name: Upload to GitHub Release
       uses: svenstaro/upload-release-action@v2
-      if: github.event_name == 'release' && matrix.config.release
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ./release-ready/caddy-${{ matrix.config.name }}.tar.gz
