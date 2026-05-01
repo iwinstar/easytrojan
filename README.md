@@ -155,18 +155,6 @@ ALPN: h2/http1.1
 客户端不只局限于以下几种，仅需支持trojan连接即可
 ```
 
-- 常见客户端连接trojan示例
->- Windows </br>
-> [配置示例](https://testingcf.jsdelivr.net/gh/iwinstar/easytrojan@client/v2rayn-trojan.png) | [V2rayN-Core](https://github.com/2dust/v2rayN/releases) | [加速下载](https://ghproxy.com/https://github.com/2dust/v2rayN/releases/download/6.23/v2rayN-With-Core.zip) 
->- MacOS </br>
-> [配置示例](https://testingcf.jsdelivr.net/gh/iwinstar/easytrojan@client/v2rayu-trojan.png) | [V2rayU](https://github.com/yanue/V2rayU/releases)  | [加速下载-64](https://ghproxy.com/https://github.com/yanue/V2rayU/releases/download/v3.8.0/V2rayU-64.dmg) | [加速下载-arm](https://ghproxy.com/https://github.com/yanue/V2rayU/releases/download/v3.8.0/V2rayU-arm64.dmg)
->- Android </br>
-> [配置示例](https://testingcf.jsdelivr.net/gh/iwinstar/easytrojan@client/v2rayng-trojan.png) | [V2rayNG](https://github.com/2dust/v2rayNG/releases) | [加速下载](https://ghproxy.com/https://github.com/2dust/v2rayNG/releases/download/1.8.5/v2rayNG_1.8.5.apk) 
->- iOS </br>
-> [配置示例](https://testingcf.jsdelivr.net/gh/iwinstar/easytrojan@client/shadowrocket-trojan.png) | [Shadowrocket](https://apps.apple.com/us/app/shadowrocket/id932747118) | [AppStore海外代购](https://www.rocketgirls.space/product)
-
-- OpenWRT passwall [配置示例](https://testingcf.jsdelivr.net/gh/iwinstar/easytrojan@client/passwall-trojan.png)
-
 - Xray连接trojan部分示例
 ```
 {
@@ -217,11 +205,6 @@ ALPN: h2/http1.1
 
 ---
 
-#### 用户交流 ####
-[Telegram Group](https://t.me/easytrojan)
-
----
-
 #### 数据报告 ####
 
 自北京时间2022年10月3日起，不断有中国大陆的用户报告基于TLS的代理服务器被封端口。
@@ -244,8 +227,6 @@ ALPN: h2/http1.1
 >- 2022年11月末，少量用户在移动设备使用clash客户端连接trojan被封端口，更换为该项目建议的客户端后均稳定运行
 >- 2022年11月末，已有超过100台服务器使用该项目部署，暂未收到用户服务器端口被封的反馈
 >- 2022年黑色星期五，将该部署方案制作成脚本并发布，并在10天后登上Github Trending总榜
-
-[![Stargazers over time](https://starchart.cc/eastmaple/easytrojan.svg)](https://starchart.cc/eastmaple/easytrojan)
 
 ---
 
