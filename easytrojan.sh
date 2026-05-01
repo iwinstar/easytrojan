@@ -31,12 +31,14 @@ if ! check_cmd tar; then
     fi
 fi
 
+latest_release=`curl -s https://api.github.com/repos/iwinstar/easytrojan/releases/latest`
+
 case $(uname -m) in
     x86_64)
-        caddy_url=https://github.com/iwinstar/easytrojan/raw/refs/heads/caddy/caddy_trojan_linux_amd64.tar.gz
+        caddy_url=`echo ${latest_release} | grep "browser_download_url.*amd64" | cut -d : -f 2,3 | tr -d \"`
         ;;
     aarch64)
-        caddy_url=https://github.com/iwinstar/easytrojan/raw/refs/heads/caddy/caddy_trojan_linux_arm64.tar.gz
+        caddy_url=`echo ${latest_release} | grep "browser_download_url.*arm64" | cut -d : -f 2,3 | tr -d \"`
         ;;
     *) 
         echo "Error: Your system version does not support"
