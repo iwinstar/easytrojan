@@ -126,7 +126,7 @@ jobs:
         tag: Caddy_v${{ steps.versions.outputs.upstream }}
         overwrite: true
         body: |
-          "This is Caddy built with the following plugins:"
+          **This is Caddy built with the following plugins:**
           - [caddy-dns/cloudflare](https://github.com/caddy-dns/cloudflare)
           - [klzgrad/forwardproxy](https://github.com/klzgrad/forwardproxy)
           - [imgk/caddy-trojan](https://github.com/imgk/caddy-trojan)
