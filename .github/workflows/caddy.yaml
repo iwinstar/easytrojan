@@ -93,6 +93,7 @@ jobs:
         ~/go/bin/xcaddy build \
           --with github.com/caddyserver/forwardproxy=github.com/klzgrad/forwardproxy@naive \
           --with github.com/imgk/caddy-trojan \
+          --with github.com/WeidiDeng/caddy-cloudflare-ip \
           --with github.com/caddy-dns/cloudflare \
           --with github.com/mholt/caddy-l4 \
           --output ./release-tmp/caddy
@@ -126,8 +127,9 @@ jobs:
         tag: Caddy_v${{ steps.versions.outputs.upstream }}
         overwrite: true
         body: |
-          **This is Caddy built with the following plugins:**
+          **This is Caddy built with the following modules:**
           - [caddy-dns/cloudflare](https://github.com/caddy-dns/cloudflare)
           - [klzgrad/forwardproxy](https://github.com/klzgrad/forwardproxy)
           - [imgk/caddy-trojan](https://github.com/imgk/caddy-trojan)
           - [mholt/caddy-l4](https://github.com/mholt/caddy-l4)
+          - [WeidiDeng/caddy-cloudflare-ip](https://github.com/WeidiDeng/caddy-cloudflare-ip)
