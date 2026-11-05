@@ -1,0 +1,26 @@
+name: Cleanup
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 3 * * *
+
+jobs:
+  Cleaning:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Cleanup workflow
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        retain_days: 7
+        keep_minimum_runs: 0
+
+    - name: Cleanup release
+      uses: dev-drprasad/delete-older-releases@master
+      with:
+        keep_latest: 14
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
